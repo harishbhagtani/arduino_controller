@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/buttonConnectToBluettoothDevice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/connect_to_device"
+        android:background="@color/colorPrimary"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.51"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/buttonUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="FORWARD"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonConnectToBluettoothDevice"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.482"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.136" />
+
+    <Button
+        android:id="@+id/buttonLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="68dp"
+        android:layout_marginEnd="36dp"
+        android:text="LEFT"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDown"
+        app:layout_constraintEnd_toStartOf="@+id/buttonUp"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonUp"
+        app:layout_constraintVertical_bias="0.045" />
+
+    <Button
+        android:id="@+id/buttonRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="71dp"
+        android:text="RIGHT"
+        app:layout_constraintBottom_toTopOf="@+id/buttonDown"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/buttonUp"
+        app:layout_constraintTop_toBottomOf="@+id/buttonUp"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/buttonDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="360dp"
+        android:text="BACKWARD"
+        app:layout_constraintBottom_toTopOf="@+id/buttonConnectToBluettoothDevice"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonLift"
+        android:layout_width="210dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="40dp"
+        android:text="Lift Up"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonExpand"
+        app:layout_constraintEnd_toStartOf="@+id/buttonExpand"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonDown"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/buttonExpand"
+        android:layout_width="204dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="152dp"
+        android:text="Expand"
+        app:layout_constraintBottom_toTopOf="@+id/buttonConnectToBluettoothDevice"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonDown" />
+
+    <TextView
+        android:id="@+id/textViewConnectionStatus"
+        android:layout_width="0dp"
+        android:textColor="@android:color/white"
+        android:textAlignment="center"
+        android:padding="4dp"
+        android:background="@android:color/holo_red_light"
+        android:layout_height="wrap_content"
+        android:text="Not Connected"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonLetDown"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Let Down"
+        app:layout_constraintEnd_toEndOf="@+id/buttonLift"
+        app:layout_constraintStart_toStartOf="@+id/buttonLift"
+        app:layout_constraintTop_toBottomOf="@+id/buttonLift" />
+
+    <Button
+        android:id="@+id/buttonContract"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Contract"
+        app:layout_constraintEnd_toEndOf="@+id/buttonExpand"
+        app:layout_constraintStart_toEndOf="@+id/buttonLift"
+        app:layout_constraintTop_toBottomOf="@+id/buttonExpand" />
+</androidx.constraintlayout.widget.ConstraintLayout>
