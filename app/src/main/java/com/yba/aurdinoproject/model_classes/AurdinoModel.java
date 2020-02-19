@@ -108,30 +108,39 @@ public class AurdinoModel {
             case CODE_FORWARD:{
                 Log.d(TAG,"Moving Forward...");
             }
+            break;
             case CODE_BACKWARD:{
                 Log.d(TAG,"Moving Backward...");
             }
+            break;
             case CODE_LEFT:{
                 Log.d(TAG,"Moving Left...");
             }
+            break;
             case CODE_RIGHT:{
                 Log.d(TAG,"Moving Right...");
             }
+            break;
             case CODE_LIFT_UP:{
                 Log.d(TAG,"Lifting Up...");
             }
+            break;
             case CODE_LET_DOWN:{
                 Log.d(TAG,"Letting Down...");
             }
+            break;
             case CODE_EXPAND:{
                 Log.d(TAG,"Expanding...");
             }
+            break;
             case CODE_CONTRACT:{
                 Log.d(TAG,"Contacting...");
             }
+            break;
             case CODE_STOP:{
                 Log.d(TAG,"Stopped.");
             }
+            break;
         }
     }
 

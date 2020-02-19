@@ -43,6 +43,7 @@ public class AurdinoInputThread implements Runnable{
                     onInputRecievedListener.onInputReceived(Integer.valueOf(message));
                 }
             }
+            Log.d(TAG,"Thread stopped");
             Thread.sleep(500);
         }catch (IOException e){
             Log.e(TAG,"Error in getting data buffer");
@@ -54,11 +55,12 @@ public class AurdinoInputThread implements Runnable{
     }
 
     public boolean isRunning(){
-        Log.d(TAG,"Thread Rinnging : " + thread.isAlive());
+        Log.d(TAG,"Thread Running : " + thread.isAlive());
         return thread.isAlive();
     }
 
     public void stop(){
+        Log.v(TAG,"Thread requested to stop");
         isStopped = true;
     }
 }

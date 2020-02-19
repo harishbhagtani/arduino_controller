@@ -2,23 +2,22 @@ package com.yba.aurdinoproject;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.yba.aurdinoproject.Interfaces.OnAurdinoModelStatusChanged;
-import com.yba.aurdinoproject.array_adapters.BluetoothListViewAdapter;
 import com.yba.aurdinoproject.helper_classes.BluetoothControlHelper;
 import com.yba.aurdinoproject.model_classes.AurdinoModel;
 
 public class MainActivity extends AppCompatActivity {
 
-    BluetoothListViewAdapter bluetoothDeviceArrayAdapter;
-
     Button buttonConnectToDevice;
-
     Button buttonMoveForward;
     Button buttonMoveBackward;
     Button buttonMoveLeft;
@@ -27,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     Button buttonLetDown;
     Button buttonExpand;
     Button buttonContract;
+
+    TextView textViewDisplayMessage;
 
     AurdinoModel aurdinoModel;
 
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //Initialization of Objects
-        bluetoothDeviceArrayAdapter = new BluetoothListViewAdapter(this, R.layout.bluetooth_list_item);
+
         buttonConnectToDevice = findViewById(R.id.buttonConnectToBluettoothDevice);
         buttonMoveForward = findViewById(R.id.buttonUp);
         buttonMoveBackward = findViewById(R.id.buttonDown);
@@ -48,12 +49,14 @@ public class MainActivity extends AppCompatActivity {
         buttonLetDown = findViewById(R.id.buttonLetDown);
         buttonExpand = findViewById(R.id.buttonExpand);
         buttonContract = findViewById(R.id.buttonContract);
+        textViewDisplayMessage = findViewById(R.id.textViewDisplayMessage);
         aurdinoModel = new AurdinoModel((BluetoothControlHelper) getApplicationContext());
 
         setOnClickListeners();
 
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void setOnClickListeners(){
 
         buttonConnectToDevice.setOnClickListener(new View.OnClickListener() {
@@ -64,122 +67,134 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        buttonMoveForward.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        buttonMoveForward.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus){
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
                     printStackMessage("Move Forward Pressed.");
                     aurdinoModel.moveForward();
-                }else{
-                    printStackMessage("Button Release");
+                }else if(event.getAction() == MotionEvent.ACTION_UP){
+                    printStackMessage("Button Released");
                     aurdinoModel.stop();
                 }
+                return false;
             }
+
         });
 
-        buttonMoveBackward.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        buttonMoveBackward.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus){
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
                     printStackMessage("Move Backward Pressed.");
                     aurdinoModel.moveBackward();
-                }else{
-                    printStackMessage("Button Release");
+                }else if(event.getAction() == MotionEvent.ACTION_UP){
+                    printStackMessage("Button Released");
                     aurdinoModel.stop();
                 }
+                return false;
             }
+
         });
 
-        buttonMoveLeft.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        buttonMoveLeft.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus){
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
                     printStackMessage("Move Left Pressed.");
                     aurdinoModel.moveLeft();
-                }else{
-                    printStackMessage("Button Release");
+                }else if(event.getAction() == MotionEvent.ACTION_UP){
+                    printStackMessage("Button Released");
                     aurdinoModel.stop();
                 }
+                return false;
             }
+
         });
 
-        buttonMoveRight.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        buttonMoveRight.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-
-                if(hasFocus){
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
                     printStackMessage("Move Right Pressed.");
                     aurdinoModel.moveRight();
-                }else{
-                    printStackMessage("Button Release");
+                }else if(event.getAction() == MotionEvent.ACTION_UP){
+                    printStackMessage("Button Released");
                     aurdinoModel.stop();
                 }
+                return false;
             }
+
         });
 
-        buttonLiftUp.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        buttonLiftUp.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-
-                if(hasFocus){
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
                     printStackMessage("Lift Up Pressed.");
                     aurdinoModel.liftUp();
-                }else{
-                    printStackMessage("Button Release");
+                }else if(event.getAction() == MotionEvent.ACTION_UP){
+                    printStackMessage("Button Released");
                     aurdinoModel.stop();
                 }
+                return false;
             }
+
         });
 
-        buttonLetDown.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        buttonLetDown.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus){
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
                     printStackMessage("Let Down Pressed.");
                     aurdinoModel.letDown();
-                }else{
-                    printStackMessage("Button Release");
+                }else if(event.getAction() == MotionEvent.ACTION_UP){
+                    printStackMessage("Button Released");
                     aurdinoModel.stop();
                 }
+                return false;
             }
         });
 
-        buttonExpand.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        buttonExpand.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-
-                if(hasFocus){
-                    printStackMessage("Expand Pressed.");
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
+                    printStackMessage("ExpandPressed.");
                     aurdinoModel.expand();
-                }else{
-                    printStackMessage("Button Release");
+                }else if(event.getAction() == MotionEvent.ACTION_UP){
+                    printStackMessage("Button Released");
                     aurdinoModel.stop();
                 }
+                return false;
             }
         });
 
-        buttonContract.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        buttonContract.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus){
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_DOWN){
                     printStackMessage("Contract Pressed.");
                     aurdinoModel.contract();
-                }else{
-                    printStackMessage("Button Release");
+                }else if(event.getAction() == MotionEvent.ACTION_UP){
+                    printStackMessage("Button Released");
                     aurdinoModel.stop();
                 }
+                return false;
             }
+
         });
 
         aurdinoModel.setOnAurdinoModelStatusChanged(new OnAurdinoModelStatusChanged() {
             @Override
             public void onStatusChanged(int statusCode) {
-                printStackMessage("Aurdino Status Changed");
+                //printStackMessage("Aurdino Status Changed");
             }
         });
     }
 
     public void printStackMessage(String message){
+        textViewDisplayMessage.setText(message);
         Log.d(TAG, message);
     }
 

@@ -144,7 +144,7 @@ public class BluetoothControlHelper extends Application {
             @Override
             public void onConnectionFailed() {
                 if(bluetoothConnectionListener != null)
-                bluetoothConnectionListener.onDisconnected();
+                bluetoothConnectionListener.onConnectionFailed();
             }
         });
         connectBluetoothAsyncTask.execute();
@@ -179,11 +179,13 @@ public class BluetoothControlHelper extends Application {
     }
 
     public void sendData(int code){
+        Log.e(TAG,"Send Data : " + code);
         byte[] bytes = String.valueOf(code).getBytes();
         if(getBluetoothSocket() != null){
             try {
                 if(getBluetoothSocket() != null) {
                     getBluetoothSocket().getOutputStream().write(bytes);
+                    Log.v(TAG,"Data sent successfully.");
                 }else{
                     Log.e(TAG,"Bluetooth Socket is null");
                 }
@@ -191,6 +193,8 @@ public class BluetoothControlHelper extends Application {
                 Log.e(TAG,"Error in sending data through bluetooth");
                 e.printStackTrace();
             }
+        }else{
+            Log.e(TAG,"Unable to send data : Bluetooth Socket is null.");
         }
     }
 

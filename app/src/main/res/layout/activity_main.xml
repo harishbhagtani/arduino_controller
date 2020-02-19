@@ -124,4 +124,14 @@
         app:layout_constraintEnd_toEndOf="@+id/buttonExpand"
         app:layout_constraintStart_toEndOf="@+id/buttonLift"
         app:layout_constraintTop_toBottomOf="@+id/buttonExpand" />
+
+    <TextView
+        android:id="@+id/textViewDisplayMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Display Message"
+        app:layout_constraintBottom_toTopOf="@+id/buttonLift"
+        app:layout_constraintEnd_toEndOf="@+id/buttonDown"
+        app:layout_constraintStart_toStartOf="@+id/buttonDown"
+        app:layout_constraintTop_toBottomOf="@+id/buttonDown" />
 </androidx.constraintlayout.widget.ConstraintLayout>

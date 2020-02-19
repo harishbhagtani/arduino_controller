@@ -111,7 +111,7 @@ public class BluetoothListActivity extends AppCompatActivity {
     }
 
 
-    private void addBluetoothDevicesToList(List<BluetoothDevice> bluetoothDeviceList){
+    private void addBluetoothDevicesToList(final List<BluetoothDevice> bluetoothDeviceList){
         final BluetoothListViewAdapter bluetoothListViewAdapter = new BluetoothListViewAdapter(getApplicationContext(), R.layout.bluetooth_list_item);
         bluetoothListViewAdapter.setBluetoothDeviceList(bluetoothDeviceList);
         listView.setAdapter(bluetoothListViewAdapter);
@@ -120,7 +120,7 @@ public class BluetoothListActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
                 bluetoothListViewAdapter.setSelectedItemIndex(position);
 //                bluetoothControlHelper.setSelectedDevicePosition(position);
-                buttonSearchForDevices.setText(getString(R.string.connect));
+                buttonSearchForDevices.setText("Connect to : " + bluetoothDeviceList.get(position).getName());
                 buttonSearchForDevices.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 bluetoothHelper.setSelectedDevicePosition(position);
                 buttonSearchForDevices.setOnClickListener(new View.OnClickListener() {
@@ -134,7 +134,6 @@ public class BluetoothListActivity extends AppCompatActivity {
         this.bluetoothListViewAdapter = bluetoothListViewAdapter;
     }
 
-    //TODO:Write a method to connect to the device
     public void connectToDevice(int position){
         ConnectBluetoothAsyncTask connectBluetoothAsyncTask = new ConnectBluetoothAsyncTask(bluetoothDeviceList.get(position));
         connectBluetoothAsyncTask.setmIsBluetoothConnected(true);
@@ -147,6 +146,8 @@ public class BluetoothListActivity extends AppCompatActivity {
             @Override
             public void onConnected(BluetoothSocket bluetoothSocket) {
                 buttonSearchForDevices.setText("Connected");
+                message("Connected");
+                BluetoothListActivity.this.finish();
             }
 
             @Override
@@ -184,13 +185,6 @@ public class BluetoothListActivity extends AppCompatActivity {
 //        });
     }
 
-    public void onConnected(){
-        Intent intent = new Intent();
-        intent.putExtra("uuid", bluetoothDeviceList.get(bluetoothListViewAdapter.getSelectedItemIndex()));
-        setResult(Activity.RESULT_OK,intent);
-        finish();
-    }
-
     private void requestEnableBluetooth(){
         Intent enableBT = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         startActivityForResult(enableBT,REQUEST_CODE_ENABLE_BLUETOOTH);
@@ -200,6 +194,14 @@ public class BluetoothListActivity extends AppCompatActivity {
     public void onBackPressed() {
         if(bluetoothListViewAdapter.getSelectedItemIndex() != -1){
             bluetoothListViewAdapter.unselectItem();
+            buttonSearchForDevices.setText("Search Again");
+            buttonSearchForDevices.setBackgroundColor(getResources().getColor(R.color.blue));
+            buttonSearchForDevices.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startSearchProcess();
+                }
+            });
         }else{
             super.onBackPressed();
         }
