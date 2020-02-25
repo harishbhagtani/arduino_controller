@@ -19,12 +19,9 @@ import java.util.List;
 
 public class BluetoothControlHelper extends Application {
 
-    private  BluetoothControlHelper bluetoothControlHelper;
     private  BluetoothHelper bluetoothHelper;
     private  List<BluetoothDevice> bluetoothDeviceList;
-    private  OnBluetoothListLoadedListener onBluetoothListLoadedListener;
     private  BluetoothSocket bluetoothSocket;
-    private OnInputRecievedListener onInputRecievedListener;
     private AurdinoInputThread aurdinoInputThread;
 
     public static final String TAG = BluetoothControlHelper.class.getSimpleName();
@@ -37,25 +34,9 @@ public class BluetoothControlHelper extends Application {
             @Override
             public void onLoaded(List<BluetoothDevice> bluetoothDeviceList) {
                 getBluetoothDeviceList().addAll(bluetoothDeviceList);
-                if(onBluetoothListLoadedListener != null)
-                onBluetoothListLoadedListener.onLoaded(bluetoothDeviceList);
+                Log.v(TAG,"List Loaded Successfylly : " + BluetoothControlHelper.this.bluetoothDeviceList);
             }
         });
-    }
-
-    public void setOnBluetoothListLoadedListener(OnBluetoothListLoadedListener onBluetoothListLoadedListener) {
-        this.onBluetoothListLoadedListener = onBluetoothListLoadedListener;
-    }
-
-    public void setOnInputRecievedListener(OnInputRecievedListener onInputRecievedListener) {
-        this.onInputRecievedListener = onInputRecievedListener;
-    }
-
-    public BluetoothControlHelper getInstance(){
-        if(bluetoothControlHelper == null){
-            bluetoothControlHelper = new BluetoothControlHelper();
-        }
-        return bluetoothControlHelper;
     }
 
     public  BluetoothSocket getBluetoothSocket() {
@@ -68,46 +49,6 @@ public class BluetoothControlHelper extends Application {
 
     public boolean isBluetoothEnabled(){
         return bluetoothHelper.checkForBluetooth(null);
-    }
-
-    public void connectToDevice(final BluetoothDevice bluetoothDevice, final BluetoothConnectionListener bluetoothConnectionListener){
-        ConnectBluetoothAsyncTask connectBluetoothAsyncTask = new ConnectBluetoothAsyncTask(bluetoothDevice);
-        connectBluetoothAsyncTask.setmIsBluetoothConnected(isBluetoothEnabled());
-        connectBluetoothAsyncTask.setBluetoothConnectionListener(new BluetoothConnectionListener() {
-            @Override
-            public void onConnectionProcessStarted() {
-                if(bluetoothConnectionListener != null)
-                bluetoothConnectionListener.onConnectionProcessStarted();
-            }
-
-            @Override
-            public void onConnected(BluetoothSocket bluetoothSocket) {
-                if(bluetoothConnectionListener != null)
-                bluetoothConnectionListener.onConnected(bluetoothSocket);
-                setBluetoothSocket(bluetoothSocket);
-                aurdinoInputThread = new AurdinoInputThread(bluetoothSocket, new OnInputRecievedListener() {
-                    @Override
-                    public void onInputReceived(int input) {
-                        if(BluetoothControlHelper.this.onInputRecievedListener != null){
-                            BluetoothControlHelper.this.onInputRecievedListener.onInputReceived(input);
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onDisconnected() {
-                if(bluetoothConnectionListener != null)
-                bluetoothConnectionListener.onDisconnected();
-            }
-
-            @Override
-            public void onConnectionFailed() {
-                if(bluetoothConnectionListener != null)
-                bluetoothConnectionListener.onDisconnected();
-            }
-        });
-        connectBluetoothAsyncTask.execute();
     }
 
     public void connectToDevice(int position, final BluetoothConnectionListener bluetoothConnectionListener){
@@ -125,14 +66,6 @@ public class BluetoothControlHelper extends Application {
                 if(bluetoothConnectionListener != null)
                 bluetoothConnectionListener.onConnected(bluetoothSocket);
                 setBluetoothSocket(bluetoothSocket);
-                aurdinoInputThread = new AurdinoInputThread(bluetoothSocket, new OnInputRecievedListener() {
-                    @Override
-                    public void onInputReceived(int input) {
-                        if(BluetoothControlHelper.this.onInputRecievedListener != null){
-                            BluetoothControlHelper.this.onInputRecievedListener.onInputReceived(input);
-                        }
-                    }
-                });
             }
 
             @Override
@@ -150,8 +83,26 @@ public class BluetoothControlHelper extends Application {
         connectBluetoothAsyncTask.execute();
     }
 
+    public void startListeningForInput(final OnInputRecievedListener onInputRecievedListener){
+        if(onInputRecievedListener != null && bluetoothSocket != null){
+            aurdinoInputThread = new AurdinoInputThread(bluetoothSocket, new OnInputRecievedListener() {
+                @Override
+                public void onInputReceived(int input) {
+                    onInputRecievedListener.onInputReceived(input);
+                }
+            });
+        }
+    }
+
+    public void stopListeningForInput(){
+        if(aurdinoInputThread != null && aurdinoInputThread.isRunning())
+        aurdinoInputThread.stop();
+    }
+
+
+
     public void disconnectFromDevice(final BluetoothConnectionListener bluetoothConnectionListener){
-        if(bluetoothConnectionListener != null){
+        if(bluetoothConnectionListener != null && getBluetoothSocket() != null){
             DisconnectBluetoothAsyncTask disconnectBluetoothAsyncTask = new DisconnectBluetoothAsyncTask(getBluetoothSocket(), aurdinoInputThread);
             disconnectBluetoothAsyncTask.setBluetoothConnectionListener(new BluetoothConnectionListener() {
                 @Override
@@ -166,6 +117,7 @@ public class BluetoothControlHelper extends Application {
 
                 @Override
                 public void onDisconnected() {
+                    stopListeningForInput();
                     bluetoothConnectionListener.onDisconnected();
                 }
 
@@ -175,6 +127,10 @@ public class BluetoothControlHelper extends Application {
                 }
             });
             disconnectBluetoothAsyncTask.execute();
+        }else{
+            if(bluetoothSocket == null){
+                Log.e(TAG,"Disconnection Failed : No connected device exists.");
+            }
         }
     }
 
@@ -196,10 +152,6 @@ public class BluetoothControlHelper extends Application {
         }else{
             Log.e(TAG,"Unable to send data : Bluetooth Socket is null.");
         }
-    }
-
-    public boolean isBluetoothDeviceListListLoaded(){
-        return bluetoothDeviceList != null;
     }
 
     public  List<BluetoothDevice> getBluetoothDeviceList() {

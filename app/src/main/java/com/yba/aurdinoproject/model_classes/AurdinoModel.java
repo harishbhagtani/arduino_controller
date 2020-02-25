@@ -1,8 +1,11 @@
 package com.yba.aurdinoproject.model_classes;
 
+import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
+import com.yba.aurdinoproject.Interfaces.BluetoothConnectionListener;
 import com.yba.aurdinoproject.Interfaces.OnAurdinoModelStatusChanged;
+import com.yba.aurdinoproject.Interfaces.OnInputRecievedListener;
 import com.yba.aurdinoproject.helper_classes.BluetoothControlHelper;
 
 public class AurdinoModel {
@@ -13,14 +16,19 @@ public class AurdinoModel {
     private static final int CODE_RIGHT = 201;
     private static final int CODE_LIFT_UP = 300;
     private static final int CODE_LET_DOWN = 301;
-    private static final int CODE_EXPAND = 400;
-    private static final int CODE_CONTRACT = 401;
     private static final int CODE_STOP = 900;
+    private static final int CODE_EXPAND_SET_1 = 400;
+    private static final int CODE_EXPAND_SET_2 = 401;
+    private static final int CODE_EXPAND_SET_3 = 402;
+    private static final int CODE_CONTRACT_SET_1 = 403;
+    private static final int CODE_CONTRACT_SET_2 = 404;
+    private static final int CODE_CONTRACT_SET_3 = 405;
 
     private static final String TAG = AurdinoModel.class.getSimpleName();
 
 
     private int currentStatus;
+    private int selectedWheelSet;
 
     private BluetoothControlHelper bluetoothControlHelper;
     private OnAurdinoModelStatusChanged onAurdinoModelStatusChanged;
@@ -80,7 +88,17 @@ public class AurdinoModel {
     }
 
     public void expand(){
-        bluetoothControlHelper.sendData(currentStatus = CODE_EXPAND);
+        switch (selectedWheelSet){
+            case 1:{
+                bluetoothControlHelper.sendData(currentStatus = CODE_EXPAND_SET_1);
+            }break;
+            case 2:{
+                bluetoothControlHelper.sendData(currentStatus = CODE_EXPAND_SET_2);
+            }break;
+            case 3:{
+                bluetoothControlHelper.sendData(currentStatus = CODE_EXPAND_SET_3);
+            }break;
+        }
         if(onAurdinoModelStatusChanged != null){
             onAurdinoModelStatusChanged.onStatusChanged(currentStatus);
         }
@@ -88,7 +106,17 @@ public class AurdinoModel {
     }
 
     public void contract(){
-        bluetoothControlHelper.sendData(currentStatus = CODE_CONTRACT);
+        switch (selectedWheelSet){
+            case 1:{
+                bluetoothControlHelper.sendData(currentStatus = CODE_CONTRACT_SET_1);
+            }break;
+            case 2:{
+                bluetoothControlHelper.sendData(currentStatus = CODE_CONTRACT_SET_2);
+            }break;
+            case 3:{
+                bluetoothControlHelper.sendData(currentStatus = CODE_CONTRACT_SET_3);
+            }break;
+        }
         if(onAurdinoModelStatusChanged != null){
             onAurdinoModelStatusChanged.onStatusChanged(currentStatus);
         }
@@ -101,6 +129,14 @@ public class AurdinoModel {
             onAurdinoModelStatusChanged.onStatusChanged(currentStatus);
         }
         printMessage();
+    }
+
+    public boolean isConnectedToAurdino(){
+        if(bluetoothControlHelper.getBluetoothSocket() != null){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     private void printMessage(){
@@ -129,12 +165,16 @@ public class AurdinoModel {
                 Log.d(TAG,"Letting Down...");
             }
             break;
-            case CODE_EXPAND:{
-                Log.d(TAG,"Expanding...");
+            case CODE_EXPAND_SET_1:
+            case CODE_EXPAND_SET_2:
+            case CODE_EXPAND_SET_3: {
+                Log.d(TAG,"Expanding wheel set " + selectedWheelSet);
             }
             break;
-            case CODE_CONTRACT:{
-                Log.d(TAG,"Contacting...");
+            case CODE_CONTRACT_SET_1:
+            case CODE_CONTRACT_SET_2:
+            case CODE_CONTRACT_SET_3:{
+                Log.d(TAG,"Contracting wheel set " + selectedWheelSet);
             }
             break;
             case CODE_STOP:{
@@ -144,7 +184,53 @@ public class AurdinoModel {
         }
     }
 
+    public void startListeningForInput(final OnInputRecievedListener onInputRecievedListener){
+        bluetoothControlHelper.startListeningForInput(new OnInputRecievedListener() {
+            @Override
+            public void onInputReceived(int input) {
+                onInputRecievedListener.onInputReceived(input);
+                Log.e(TAG,"Input received : " + input);
+            }
+        });
+    }
+
+    public void disconnectFronAurdino(){
+        bluetoothControlHelper.disconnectFromDevice(new BluetoothConnectionListener() {
+            @Override
+            public void onConnectionProcessStarted() {
+
+            }
+
+            @Override
+            public void onConnected(BluetoothSocket bluetoothSocket) {
+
+            }
+
+            @Override
+            public void onDisconnected() {
+                Log.v(TAG,"Disconnected Successfully");
+            }
+
+            @Override
+            public void onConnectionFailed() {
+
+            }
+        });
+    }
+
+    public void stopListeningForInput(){
+        bluetoothControlHelper.stopListeningForInput();
+    }
+
     public void setOnAurdinoModelStatusChanged(OnAurdinoModelStatusChanged onAurdinoModelStatusChanged) {
         this.onAurdinoModelStatusChanged = onAurdinoModelStatusChanged;
+    }
+
+    public void setSelectedWheelSet(int selectedWheelSet) {
+        this.selectedWheelSet = selectedWheelSet;
+    }
+
+    public int getSelectedWheelSet() {
+        return selectedWheelSet;
     }
 }

@@ -132,6 +132,57 @@
         android:text="Display Message"
         app:layout_constraintBottom_toTopOf="@+id/buttonLift"
         app:layout_constraintEnd_toEndOf="@+id/buttonDown"
+        app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="@+id/buttonDown"
-        app:layout_constraintTop_toBottomOf="@+id/buttonDown" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonDown"
+        app:layout_constraintVertical_bias="0.391" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupWheelSet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkedButton="@id/radioButtonWheelSet1"
+        android:orientation="horizontal"
+        android:layout_marginBottom="19dp"
+        app:layout_constraintBottom_toTopOf="@+id/buttonExpand"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <RadioButton
+            android:id="@+id/radioButtonWheelSet1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="SET 1" />
+
+        <RadioButton
+            android:id="@+id/radioButtonWheelSet2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="SET 2" />
+
+        <RadioButton
+            android:id="@+id/radioButtonWheelSet3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:text="SET 3" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/textViewSelectWheelMEssage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:text="Select Wheel SetTo Expand and Contract"
+        app:layout_constraintBottom_toTopOf="@+id/radioGroupWheelSet"
+        app:layout_constraintEnd_toEndOf="@+id/radioGroupWheelSet"
+        app:layout_constraintStart_toStartOf="@+id/radioGroupWheelSet" />
 </androidx.constraintlayout.widget.ConstraintLayout>

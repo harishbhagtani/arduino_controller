@@ -44,6 +44,7 @@ public class DisconnectBluetoothAsyncTask extends AsyncTask<Void, Void, Void> {
             isSiccessfullyDisconnected = false;
             Log.e(TAG,"Error in Disconnecting...");
         }
+
         return null;
     }
 
@@ -51,6 +52,7 @@ public class DisconnectBluetoothAsyncTask extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
         if(isSiccessfullyDisconnected && bluetoothConnectionListener != null){
+            Log.e(TAG,"onDisconnectedLisenerInvoked");
             bluetoothConnectionListener.onDisconnected();
         }
     }

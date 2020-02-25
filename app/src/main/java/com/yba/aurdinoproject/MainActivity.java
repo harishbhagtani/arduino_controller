@@ -9,9 +9,11 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.yba.aurdinoproject.Interfaces.OnAurdinoModelStatusChanged;
+import com.yba.aurdinoproject.Interfaces.OnInputRecievedListener;
 import com.yba.aurdinoproject.helper_classes.BluetoothControlHelper;
 import com.yba.aurdinoproject.model_classes.AurdinoModel;
 
@@ -28,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     Button buttonContract;
 
     TextView textViewDisplayMessage;
+    TextView textViewConnectionStatus;
+
+    RadioGroup radioGroup;
 
     AurdinoModel aurdinoModel;
 
@@ -50,9 +55,12 @@ public class MainActivity extends AppCompatActivity {
         buttonExpand = findViewById(R.id.buttonExpand);
         buttonContract = findViewById(R.id.buttonContract);
         textViewDisplayMessage = findViewById(R.id.textViewDisplayMessage);
+        textViewConnectionStatus = findViewById(R.id.textViewConnectionStatus);
+        radioGroup = findViewById(R.id.radioGroupWheelSet);
         aurdinoModel = new AurdinoModel((BluetoothControlHelper) getApplicationContext());
 
         setOnClickListeners();
+        aurdinoModel.setSelectedWheelSet(1);
 
     }
 
@@ -160,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_DOWN){
-                    printStackMessage("ExpandPressed.");
+                    printStackMessage("Expand Wheel Set "+ aurdinoModel.getSelectedWheelSet() + " Pressed.");
                     aurdinoModel.expand();
                 }else if(event.getAction() == MotionEvent.ACTION_UP){
                     printStackMessage("Button Released");
@@ -174,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_DOWN){
-                    printStackMessage("Contract Pressed.");
+                    printStackMessage("Contract Wheel Set " + aurdinoModel.getSelectedWheelSet() + " Pressed.");
                     aurdinoModel.contract();
                 }else if(event.getAction() == MotionEvent.ACTION_UP){
                     printStackMessage("Button Released");
@@ -185,6 +193,26 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.radioButtonWheelSet1:{
+                        aurdinoModel.setSelectedWheelSet(1);
+                    }break;
+                    case R.id.radioButtonWheelSet2:{
+                        aurdinoModel.setSelectedWheelSet(2);
+                    }break;
+                    case R.id.radioButtonWheelSet3:{
+                        aurdinoModel.setSelectedWheelSet(3);
+                    }break;
+                }
+
+                Log.d(TAG,"Wheel set " + aurdinoModel.getSelectedWheelSet() + " selected");
+
+            }
+        });
+
         aurdinoModel.setOnAurdinoModelStatusChanged(new OnAurdinoModelStatusChanged() {
             @Override
             public void onStatusChanged(int statusCode) {
@@ -193,10 +221,47 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(aurdinoModel.isConnectedToAurdino()){
+            textViewConnectionStatus.setBackgroundColor(getResources().getColor(R.color.green));
+            textViewConnectionStatus.setText("Connected");
+            buttonConnectToDevice.setText("Disconnect and Exit");
+            buttonConnectToDevice.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    aurdinoModel.disconnectFronAurdino();
+                    finish();
+                }
+            });
+            buttonConnectToDevice.setBackgroundColor(getResources().getColor(R.color.red));
+//            aurdinoModel.startListeningForInput(new OnInputRecievedListener() {
+////                @Override
+////                public void onInputReceived(int input) {
+////                    printStackMessage("Input Received : " + input);
+////                }
+////            });
+        }else{
+            textViewConnectionStatus.setBackgroundColor(getResources().getColor(R.color.red));
+            textViewConnectionStatus.setText("Not Connected");
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        aurdinoModel.stopListeningForInput();
+    }
+
     public void printStackMessage(String message){
         textViewDisplayMessage.setText(message);
         Log.d(TAG, message);
     }
 
-
+    @Override
+    protected void onStop() {
+        super.onStop();
+        aurdinoModel.disconnectFronAurdino();
+    }
 }

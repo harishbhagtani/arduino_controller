@@ -15,7 +15,7 @@ public class ConnectBluetoothAsyncTask extends AsyncTask<Void, Void, Void> {
 
     private BluetoothSocket bluetoothSocket;
     private BluetoothDevice bluetoothDevice;
-    private UUID uuid = UUID.fromString("cf103a14-527f-11ea-8d77-2e728ce88125");
+    private UUID uuid = UUID.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
 
     private static final String TAG = ConnectBluetoothAsyncTask.class.getSimpleName();
     private boolean isConnectionSuccessful = false;
@@ -32,19 +32,31 @@ public class ConnectBluetoothAsyncTask extends AsyncTask<Void, Void, Void> {
         super.onPreExecute();
         Log.d(TAG,"Bluetooth connection process started...");
         bluetoothConnectionListener.onConnectionProcessStarted();
+        setmIsBluetoothConnected(false);
+        BluetoothSocket tmp = null;
+        try {
+            Log.d(TAG,"Creating Bluetooth Socket...");
+            tmp = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
+            Log.d(TAG,"Bluetooth Socket Created");
+        }catch (IOException e){
+            Log.e(TAG,"Error in creating socket");
+        }
+        bluetoothSocket = tmp;
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
 
+        Log.d(TAG,"doInBackground() called  " + mIsBluetoothConnected);
+        BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
+
         try {
-            if (bluetoothSocket == null || !mIsBluetoothConnected) {
+            if (!mIsBluetoothConnected) {
                 Log.e(TAG,"UUID : " + uuid);
                 Log.d(TAG,"Attempting to connect to " + bluetoothDevice.getName() + " with address " + bluetoothDevice.getAddress());
-                bluetoothSocket = bluetoothDevice.createInsecureRfcommSocketToServiceRecord(uuid);
-                BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
                 bluetoothSocket.connect();
                 Log.v(TAG,"Connected to " + bluetoothDevice.getName() + " with address " + bluetoothDevice.getAddress());
+                isConnectionSuccessful = true;
             }
         } catch (IOException e) {
             Log.e(TAG,"Error connecting to " + bluetoothDevice.getName() + " with address " + bluetoothDevice.getAddress());
@@ -55,7 +67,7 @@ public class ConnectBluetoothAsyncTask extends AsyncTask<Void, Void, Void> {
                 Log.e(TAG,"Connected Finally");
             }catch (Exception e3){
                 e3.printStackTrace();
-                Log.e(TAG,"Unable to connect even now to " + bluetoothDevice.getName() + " " + bluetoothDevice.getAddress());
+                Log.e(TAG,"Unable to connect even now to " + bluetoothDevice.getName() + " at address " + bluetoothDevice.getAddress());
             }
             try {
                 bluetoothSocket.close();
