@@ -23,6 +23,7 @@ public class BluetoothControlHelper extends Application {
     private  List<BluetoothDevice> bluetoothDeviceList;
     private  BluetoothSocket bluetoothSocket;
     private AurdinoInputThread aurdinoInputThread;
+    private boolean isConnectedToArduino = false;
 
     public static final String TAG = BluetoothControlHelper.class.getSimpleName();
 
@@ -35,6 +36,16 @@ public class BluetoothControlHelper extends Application {
             public void onLoaded(List<BluetoothDevice> bluetoothDeviceList) {
                 getBluetoothDeviceList().addAll(bluetoothDeviceList);
                 Log.v(TAG,"List Loaded Successfylly : " + BluetoothControlHelper.this.bluetoothDeviceList);
+            }
+        });
+    }
+
+    public void reloadBluetoothDeviceList(final OnBluetoothListLoadedListener onBluetoothListLoadedListener){
+        bluetoothHelper.getBluetoothDeviceList(new OnBluetoothListLoadedListener() {
+            @Override
+            public void onLoaded(List<BluetoothDevice> bluetoothDeviceList) {
+                getBluetoothDeviceList().addAll(bluetoothDeviceList);
+                onBluetoothListLoadedListener.onLoaded(bluetoothDeviceList);
             }
         });
     }
@@ -66,6 +77,7 @@ public class BluetoothControlHelper extends Application {
                 if(bluetoothConnectionListener != null)
                 bluetoothConnectionListener.onConnected(bluetoothSocket);
                 setBluetoothSocket(bluetoothSocket);
+                isConnectedToArduino = true;
             }
 
             @Override
@@ -119,6 +131,7 @@ public class BluetoothControlHelper extends Application {
                 public void onDisconnected() {
                     stopListeningForInput();
                     bluetoothConnectionListener.onDisconnected();
+                    isConnectedToArduino = false;
                 }
 
                 @Override
@@ -152,6 +165,10 @@ public class BluetoothControlHelper extends Application {
         }else{
             Log.e(TAG,"Unable to send data : Bluetooth Socket is null.");
         }
+    }
+
+    public boolean isConnectedToArduino() {
+        return isConnectedToArduino;
     }
 
     public  List<BluetoothDevice> getBluetoothDeviceList() {

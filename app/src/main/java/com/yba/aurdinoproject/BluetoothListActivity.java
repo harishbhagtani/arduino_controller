@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.graphics.Color;
@@ -16,8 +17,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.yba.aurdinoproject.Interfaces.BluetoothConnectionListener;
+import com.yba.aurdinoproject.Interfaces.OnBluetoothListLoadedListener;
 import com.yba.aurdinoproject.array_adapters.BluetoothListViewAdapter;
 import com.yba.aurdinoproject.helper_classes.BluetoothControlHelper;
+
+import java.util.List;
 
 
 public class BluetoothListActivity extends AppCompatActivity {
@@ -152,7 +156,16 @@ public class BluetoothListActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
         if (requestCode == REQUEST_CODE_ENABLE_BLUETOOTH) {
-            startSearchProcess();
+            if(bluetoothControlHelper.getBluetoothDeviceList().size() == 0){
+                bluetoothControlHelper.reloadBluetoothDeviceList(new OnBluetoothListLoadedListener() {
+                    @Override
+                    public void onLoaded(List<BluetoothDevice> bluetoothDeviceList) {
+                        startSearchProcess();
+                    }
+                });
+            }else{
+                startSearchProcess();
+            }
         }
 
         super.onActivityResult(requestCode, resultCode, data);

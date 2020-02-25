@@ -237,12 +237,21 @@ public class MainActivity extends AppCompatActivity {
             });
             buttonConnectToDevice.setBackgroundColor(getResources().getColor(R.color.red));
 //            aurdinoModel.startListeningForInput(new OnInputRecievedListener() {
-////                @Override
-////                public void onInputReceived(int input) {
-////                    printStackMessage("Input Received : " + input);
-////                }
-////            });
+//                @Override
+//                public void onInputReceived(int input) {
+//                    printStackMessage("Input Received : " + input);
+//                }
+//            });
         }else{
+            buttonConnectToDevice.setText("CONNECT TO A DEVICE");
+            buttonConnectToDevice.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MainActivity.this, BluetoothListActivity.class);
+                    startActivity(intent);
+                }
+            });
+            buttonConnectToDevice.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             textViewConnectionStatus.setBackgroundColor(getResources().getColor(R.color.red));
             textViewConnectionStatus.setText("Not Connected");
         }
@@ -262,6 +271,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
         aurdinoModel.disconnectFronAurdino();
+        super.onDestroy();
     }
 }

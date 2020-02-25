@@ -132,11 +132,7 @@ public class AurdinoModel {
     }
 
     public boolean isConnectedToAurdino(){
-        if(bluetoothControlHelper.getBluetoothSocket() != null){
-            return true;
-        }else{
-            return false;
-        }
+        return bluetoothControlHelper.isConnectedToArduino();
     }
 
     private void printMessage(){

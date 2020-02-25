@@ -39,8 +39,14 @@ public class AurdinoInputThread implements Runnable{
                 bytes = inputStream.read(buffer);
                 String message = new String(buffer,0,bytes);
                 Log.e(TAG,"Message Received : " + message);
-                if(onInputRecievedListener != null){
-                    onInputRecievedListener.onInputReceived(Integer.valueOf(message));
+                if(onInputRecievedListener != null ){
+                    int intMessage = 0;
+                    try {
+                        intMessage = Integer.valueOf(message);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    onInputRecievedListener.onInputReceived(intMessage);
                 }
             }
             Log.d(TAG,"Thread stopped");
